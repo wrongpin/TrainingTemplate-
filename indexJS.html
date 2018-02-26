@@ -31,21 +31,19 @@ j: I'm back
 
 
 <body>
-  <div id="userinputdialog">
+  <div id="userinputdialog" style="border='none';border-bottom:1px solid rgba(255,255,255,.87);min-width:400px;position:absolute;float:right;padding:20px;background: rgba(0,0,0,0.7);color: white;right: 0;top: 0; z-index: 19;">
     Training Information:
     <div>
-      Header (Overall topic)
-      <input type="textarea" id="HeaderInput">
+      <input style="background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;" type="textarea" placeholder="Header (Overall topic)" id="HeaderInput">
     </div>
     <div>
-      Description (white)
-      <input type="textarea" id="DescriptionInput">
+      <input style="background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;" type="textarea" placeholder="Description (white)" id="DescriptionInput">
     </div>
+    <br>Sections:
     <div class="sectioninputcontainer">
     </div>
-    <input type="submit" value="add section" onclick="addSection();"/>
-    <input type="submit" value="remove section" onclick="removeSection();" />
-    <input type="submit" value="render" onclick="render();" />
+    <input type="submit" value="add section" onclick="addSection();"/><br><br>
+    <input type="submit" value="preview" onclick="render();" />
 
     <div id="json">
 
@@ -58,20 +56,24 @@ j: I'm back
 </body>
 
 <!-- Need to keep this button out of the userinputdialog and the preview so i put it here but placement on the screen can be changed  -->
-<button style="position: absolute;top: 100px; right: 0px;" >Edit</button>
+<button id="editbutton" style="position: absolute;top: 0px; right: 0px; z-index: 19;" >Edit</button>
 
 <script type="text/javascript">
 //css rules as plaintext variable preceded by "s_"
-var s_general = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;"
+var s_general = "box-sizing: inherit;padding: 30px;padding-top: 64px!important;padding-bottom: 64px!important;"
 var s_header = "padding: 128px 16px;box-sizing: inherit;display: block;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);text-align: center!important;color: #fff!important;background-color: #4CAF50!important; box-sizing: inherit;font-size: 64px!important;"
+var s_titleSecond = "background-color:green; padding: 25px 50px 75px 100px;"
 var s_title = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;color: #000!important;background-color: #f1f1f1!important;"
 var s_navBar = "box-sizing: inherit;position: fixed;width: 100%;z-index: 1;top: 0;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); box-sizing: inherit;width: 100%;overflow: hidden;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);font-size: 18px!important;text-align: left!important;color: #fff!important;background-color: #4CAF50!important;"
-var s_navItem;
+var s_navItem = "margin-left:20px; margin-right: 20px"
 var s_generalContentSection = "box-sizing: inherit;max-width: 980px;margin: auto;"
-var s_evenSectionConten = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;"
-var s_oddSectionContent = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;color: #000!important;background-color: #f1f1f1!important;"
+var s_evenSectionConten = "width: 66.66666%; float: left; background-color: red; display: inline-block;"
+var s_oddSectionContent = "width: 66.66666%; float: right; background-color: blue;"
+var s_evenImage = "width: 33.33333%; float: right; display: inline-block;"
+var s_oddImage = "width: 33.33333%; float: left;"
 var s_img = "display: block; max-width:400px; max-height:400px; width: auto; height: auto;"
-
+var inputmaterial = "background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;";
+var s_cardEffect = "box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);"
 //creating JSON object
 var jsonObj;
 
@@ -85,15 +87,27 @@ function render(){
 
   //Goes through the sectioninputcontainer and adds each section properly
   //gets all $(".sectioninputcontainer input") elements and go through each of them in batches of three (three fields per section)
-  for (var i = 0; i < $(".sectioninputcontainer input").length; i++) {
-    $("#preview").append("<br><div id='"+$($(".sectioninputcontainer input")[i]).val().replace(" ","_")+"' style='"+s_title+"'>"+$($(".sectioninputcontainer input")[i]).val()+"<br>")
-    $("#preview").append("<div style='"+s_general+"'>"+$($(".sectioninputcontainer input")[i+1]).val()+"<br>")
-    $("#preview").append("<img style='"+s_img+"' src='"+$($(".sectioninputcontainer input")[i+2]).val()+"'><br><br>")
-    $(".navBar").append("<a style='"+s_navItem+"' href='#"+$($(".sectioninputcontainer input")[i]).val().replace(" ","_")+"'>"+$($(".sectioninputcontainer input")[i]).val()+"</a>")
-    i=i+2;
+
+  var jacksvar = 1;
+
+  for (var i = 0; i < $(".sectioninputcontainer input, .sectioninputcontainer textarea").length; i=i+4) {
+    $("#preview").append("<br><div id='"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val().replace(" ","_")+"' style='"+s_titleSecond+"'>"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val()+"<br>");
+    $(".navBar").append("<a style='"+s_navItem+"' href='#"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val().replace(" ","_")+"'>"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val()+"</a>");
+
+    if (jacksvar % 2 == 0) {
+    //image on the right and text on the left
+    $("#preview").append("<div style='"+s_evenSectionConten+" "+s_cardEffect+"'>"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i+1]).val()+"<br>");
+    $("#preview").append("<img style='"+s_img+" "+s_evenImage+"' src='"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i+2]).val()+"'><br><br>");
+    } else {
+      //image on the left and text on right
+      $("#preview").append("<div style='"+s_oddSectionContent+" "+s_cardEffect+"'>"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i+1]).val()+"<br>");
+      $("#preview").append("<img style='"+s_img+" "+s_oddImage+" ' src='"+$($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i+2]).val()+"'><br><br>");
+    }
+    jacksvar++;
   }
+
   //Makes NavItems change colour on MouseOver
-$("a").mouseover(function(){$("a").css("color:red"); console.log("YAY")})
+  $("a").mouseover(function(){$("a").css("color:white"); console.log("YAY")})
 
 
   //JSON variable that user can copy AND is inserted into the resulting HTML that they will copy into their greennet page.
@@ -106,20 +120,23 @@ $("a").mouseover(function(){$("a").css("color:red"); console.log("YAY")})
   }
   //Passes JSON object throuh stringify
   $("#json").text(JSON.stringify(jsonObj));
-
+  $("#userinputdialog").hide();
 }
 
 //Makes the edit button toggle the userinputdialog as hidden or visible
   $(document).ready(function(){
-    $("button").click(function(){
+    $("#editbutton").click(function(){
       $("#userinputdialog").toggle();
     });
   });
 
 //Adds another section for the user to enter details or steps into
 function addSection(){
-  $(".sectioninputcontainer").append("<br><input placeholder='section title' type='textarea'><br><input placeholder='section description' type='textarea'><br><input placeholder='image link (optional)' type='textarea'><br><br>");
+  $(".sectioninputcontainer").append("<div style='margin:15px;border-bottom:3px solid grey;border-top:3px solid grey;padding:10px;background:rgba(0,0,0,0.1)'><input style='width:100%; "+inputmaterial+"' placeholder='section title' type='textarea'><br><textarea rows=10 style='width:100%;resize: none; "+inputmaterial+"' placeholder='section description'></textarea><br><input style='width:100%; "+inputmaterial+"' placeholder='image link (optional)' type='textarea'><br><input class='removesection' type='button' value='remove section'><br></div>");
   //  $(".sectioncontainer").append("<div style="+s_general+" ></div>")
+  $(".removesection").click(function(){
+    $(this).parent().remove();
+  })
 }
 
 //Need to add a remove section function
