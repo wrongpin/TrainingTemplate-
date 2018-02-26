@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+SHOW ME WHAT YOU GOT
+
+2f745418-2960-459c-9d6c-ba9c0258db07
+
+todo:
+list groups and the style rules they should inherit
+provide two options "create from scratch" and "generate from JSON code" (the latter to be done after everything)
+store inputs from input fields to variables
+generate plaintext html from those variables
+add using jquery append() function to rendered html preview
+append it to code output box (hidden till the end of training)
+
+conversation
+k: maybe define a template of variables that will be needed per section / which elements belong to that / etc...
+j: I'm back
+
+-->
+<html>
+<title>Training Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<body>
+  <div id="userinputdialog">
+    Training Information:
+    <div>
+      Header (Overall topic)
+      <input type="textarea" id="HeaderInput">
+    </div>
+    <div>
+      Description (white)
+      <input type="textarea" id="DescriptionInput">
+    </div>
+    <div class="sectioninputcontainer">
+    </div>
+    <input type="submit" value="add section" onclick="addSection();"/>
+    <input type="submit" value="remove section" onclick="removeSection();" />
+    <input type="submit" value="render" onclick="render();" />
+
+    <div id="json">
+
+    </div>
+  </div>
+
+  <div id="preview">
+
+  </div>
+</body>
+
+<!-- Need to keep this button out of the userinputdialog and the preview so i put it here but placement on the screen can be changed  -->
+<button style="position: absolute;top: 100px; right: 0px;" >Edit</button>
+
+<script type="text/javascript">
+//css rules as plaintext variable preceded by "s_"
+var s_general = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;"
+var s_header = "padding: 128px 16px;box-sizing: inherit;display: block;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);text-align: center!important;color: #fff!important;background-color: #4CAF50!important; box-sizing: inherit;font-size: 64px!important;"
+var s_title = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;color: #000!important;background-color: #f1f1f1!important;"
+var s_navBar = "box-sizing: inherit;position: fixed;width: 100%;z-index: 1;top: 0;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); box-sizing: inherit;width: 100%;overflow: hidden;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);font-size: 18px!important;text-align: left!important;color: #fff!important;background-color: #4CAF50!important;"
+var s_navItem;
+var s_generalContentSection = "box-sizing: inherit;max-width: 980px;margin: auto;"
+var s_evenSectionConten = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;"
+var s_oddSectionContent = "box-sizing: inherit;padding: 0.01em 16px;padding-top: 64px!important;padding-bottom: 64px!important;color: #000!important;background-color: #f1f1f1!important;"
+var s_img = "display: block; max-width:400px; max-height:400px; width: auto; height: auto;"
+
+//creating JSON object
+var jsonObj;
+
+function render(){
+  //adds NavBar to preview
+  $("#preview").html('<div style="box-sizing: inherit;position: fixed;width: 100%;z-index: 1;top: 0;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); box-sizing: inherit;width: 100%;overflow: hidden;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);font-size: 18px!important;text-align: left!important;color: #fff!important;background-color: #4CAF50!important;" class="navBar"> </div>');
+
+  //add training generic info
+  $("#preview").append("<div style='"+s_header+" "+s_general+"' class='titleboxstyle'>"+$("#HeaderInput").val()+"</div>");
+  $("#preview").append("<div style='"+s_general+" "+s_generalContentSection+"' class='descriptionboxstyle'>"+$("#DescriptionInput").val()+"</div>");
+
+  //Goes through the sectioninputcontainer and adds each section properly
+  //gets all $(".sectioninputcontainer input") elements and go through each of them in batches of three (three fields per section)
+  for (var i = 0; i < $(".sectioninputcontainer input").length; i++) {
+    $("#preview").append("<br><div id='"+$($(".sectioninputcontainer input")[i]).val().replace(" ","_")+"' style='"+s_title+"'>"+$($(".sectioninputcontainer input")[i]).val()+"<br>")
+    $("#preview").append("<div style='"+s_general+"'>"+$($(".sectioninputcontainer input")[i+1]).val()+"<br>")
+    $("#preview").append("<img style='"+s_img+"' src='"+$($(".sectioninputcontainer input")[i+2]).val()+"'><br><br>")
+    $(".navBar").append("<a style='"+s_navItem+"' href='#"+$($(".sectioninputcontainer input")[i]).val().replace(" ","_")+"'>"+$($(".sectioninputcontainer input")[i]).val()+"</a>")
+    i=i+2;
+  }
+  //Makes NavItems change colour on MouseOver
+$("a").mouseover(function(){$("a").css("color:red"); console.log("YAY")})
+
+
+  //JSON variable that user can copy AND is inserted into the resulting HTML that they will copy into their greennet page.
+  jsonObj = {
+    "HeaderInput": $("#HeaderInput").val(),
+    "TitleInput": $("#TitleInput").val(),
+    "DescriptionInput": $("#DescriptionInput").val(),
+    "InformationInput": $("#InformationInput").val(),
+    "NavItemInput": $("#NavItemInput").val(),
+  }
+  //Passes JSON object throuh stringify
+  $("#json").text(JSON.stringify(jsonObj));
+
+}
+
+//Makes the edit button toggle the userinputdialog as hidden or visible
+  $(document).ready(function(){
+    $("button").click(function(){
+      $("#userinputdialog").toggle();
+    });
+  });
+
+//Adds another section for the user to enter details or steps into
+function addSection(){
+  $(".sectioninputcontainer").append("<br><input placeholder='section title' type='textarea'><br><input placeholder='section description' type='textarea'><br><input placeholder='image link (optional)' type='textarea'><br><br>");
+  //  $(".sectioncontainer").append("<div style="+s_general+" ></div>")
+}
+
+//Need to add a remove section function
+//removes all the sections
+function removeSection(){
+  $(".sectioninputcontainer").empty();
+}
+
+</script>
+</html>
