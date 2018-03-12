@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<!--
+SHOW ME WHAT YOU GOT
+
+2f745418-2960-459c-9d6c-ba9c0258db07
+
+todo:
+list groups and the style rules they should inherit
+provide two options "create from scratch" and "generate from JSON code" (the latter to be done after everything)
+store inputs from input fields to variables COMPLETED
+generate plaintext html from those variables
+add using jquery append() function to rendered html preview COMPLETED
+append it to code output box (hidden till the end of training)
+change opacity of edit drop down COMPLETED
+change buttons to be better COMPLETED
+set all containers to be minimum uniform size COMPLETED
+maybe header font light grey / white COMPLETED
+gap for header at the top COMPLETED
+entire background light grey COMPLETED
+if no image then hide image symbol COMPLETED
+JSON object needs sorting out COMPLETED
+add toggle hover for NavItems
+double check colour scheme to make sure readable and simple material design
+make smooth scroll work
+remove section button changes COMPLETED
+
+
+
+-->
+<html>
+
+<head>
+  <title>Training Template</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Include external JS libs. -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+  <!-- Include Editor JS files. -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.5/js/froala_editor.pkgd.min.js"></script>
+  <!-- Fonts -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.5/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.5/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<style>
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.btn {
+  border-width: 0;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  background-color: #8b9dc3;
+  color: #ecf0f1;
+  transition: background-color .3s;
+}
+
+.btn:hover {
+  background-color: #27ae60;
+}
+
+.btn > * {
+  position: relative;
+}
+
+.btn:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0;
+  padding-top: 0;
+  border-radius: 100%;
+  background-color: rgba(236, 240, 241, .3);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.btn:active:before {
+  width: 120%;
+  padding-top: 120%;
+  transition: width .2s ease-out, padding-top .2s ease-out;
+}
+
+.btn2 {
+  border-width: 0;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  background-color: #8b9dc3;
+  color: #ecf0f1;
+  transition: background-color .3s;
+}
+
+.btn2:hover {
+  background-color: #27ae60;
+}
+
+.btn2 > * {
+  position: relative;
+}
+
+.btn2:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0;
+  padding-top: 0;
+  border-radius: 100%;
+  background-color: rgba(236, 240, 241, .3);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.btn2:active:before {
+  width: 120%;
+  padding-top: 120%;
+  transition: width .2s ease-out, padding-top .2s ease-out;
+}
+</style>
+
+<body style="font-family: Montserrat, Lato;">
+  <div id="userinputdialog" style="border='none';border-bottom:1px solid;border-color: white; min-width:400px;position:absolute;float:right;padding:20px;background: #64b5f6;color: black;right: 0;top: 0; z-index: 19;">
+    Training Information:
+    <div>
+      <input style="background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;" type="textarea" placeholder="Header (Overall topic)" id="HeaderInput">
+    </div>
+    <div>
+      <input style="background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;" type="textarea" placeholder="Description (white)" id="DescriptionInput">
+    </div>
+    <br>Sections:
+    <div class="sectioninputcontainer">
+    </div>
+    <input class="btn" type="submit" value="add section" onclick="addSection();" />
+    <br>
+    <br>
+    <input class="btn" type="submit" value="preview" onclick="render();" />
+
+    <div id="json">
+
+    </div>
+  </div>
+
+  <div style="scroll-behavior: smooth!important; background-color: #d8d8d8!important; margin-bottom: 30px" id="preview">
+
+  </div>
+
+  <!-- Initialize the editor. -->
+  <script> $(function() { $('textarea').froalaEditor() }); </script>
+</body>
+
+<!-- Need to keep this button out of the userinputdialog and the preview so i put it here but placement on the screen can be changed  -->
+<button class="btn" id="editbutton" style="position: absolute;top: 0px; right: 0px; z-index: 19;">Edit</button>
+
+<script type="text/javascript">
+//css rules as plaintext variable preceded by "s_"
+// general css rules
+var s_title = "color: #e1e2e1"
+var s_navBar = "box-sizing: inherit;position: fixed;width: 100%;z-index: 1;top: 0;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); box-sizing: inherit;width: 100%;overflow: hidden;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);font-size: 18px!important;text-align: left!important;color: #fff!important;background-color: #73e8ff!important;"
+var s_navItem = "margin-left:20px; margin-right: 20px; text-decoration: none;"
+var inputmaterial = "background: rgba(0,0,0,0);border: none;color: rgba(255,255,255,1);border-bottom: 1px solid white;margin-bottom: 8px;margin-top: 8px;width:100%;";
+var s_cardEffect = "box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);"
+//css rules for appearance
+var s_header = "box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);background-color: #01579b!important;color: #ffffff; font-size: 64px!important; min-height: 300px; font-family: Montserrat, Lato; display: flex; align-items: center; justify-content:center; text-align: center;"
+var s_desc = "background:#d8d8d8; min-height: 500px; font-size: 18px; line-height: 1.8; min-height: 100px; font-family: Montserrat, Lato; text-align: center;"
+var s_sectionHeader = "background-color: #63a4ff!important;font-size: 32px; min-height: 100px; color: #eceff1; font-family: Montserrat, Lato; display: flex; align-items: center; justify-content:center; text-align: center;"
+var s_evenSectionContent = "background:rgba(200,200,200,0.1); min-height: 100px; font-family: Montserrat, Lato;"
+var s_section = "background:rgba(200,200,200,0.1); min-height: 100px; font-family: Montserrat, Lato;"
+var s_noImageDesc = "background:#d8d8d8; min-height: 500px; font-size: 18px; line-height: 1.8; min-height: 100px; font-family: Montserrat, Lato;"
+//css rules for positioning
+var p_parentRight = "display: flex; justify-content: center; align-items: center;"
+var p_parentLeft = "display: flex; flex-direction: row-reverse; justify-content: center; align-items: center;"
+var p_parentImage = "display: flex; flex-basis: 60%;" //this goes in the parent div of the image
+var p_imageSize = "width: 100%; height:100%;object-fit:cover; max-width: 600px; max-height: 600px;" // this goes in the image tag
+var p_text = "display: flex; flex-basis: 40%;"
+
+
+//creating JSON object
+var jsonObj;
+
+
+
+function render() {
+
+
+
+  //adds NavBar to preview
+  $("#preview").html('<div style="box-sizing: inherit;position: fixed;width: 100%;z-index: 1;top: 0;box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19); box-sizing: inherit;width: 100%;overflow: hidden;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);font-size: 18px!important;text-align: left!important;color: #fff!important;background-color: #002f6c!important;" class="navBar"> </div>');
+
+  //add training generic info
+  $("#preview").append("<div style='" + s_header + "' class='titleboxstyle'>" + $("#HeaderInput").val() + "</div>");
+  $("#preview").append("<div style='" + s_desc + "' class='descriptionboxstyle'>" + $("#DescriptionInput").val() + "</div>");
+
+  //Goes through the sectioninputcontainer and adds each section properly
+  //gets all $(".sectioninputcontainer input") elements and go through each of them in batches of three (three fields per section)
+
+  var jacksvar = 1;
+  var data = {};
+  data.title = $("#HeaderInput").val();
+  data.desc = $("#DescriptionInput").val();
+  data.sections = [];
+  // go into the sections and render + store in JSON
+  for (var i = 0; i < $(".sectioninputcontainer input, .sectioninputcontainer textarea").length; i = i + 4) {
+    $("#preview").append("<br><div id='" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val().replace(" ", "_") + "' style='" + s_sectionHeader + " " + s_cardEffect + " " + s_section + " '>" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val() + "<br>");
+    $(".navBar").append("<a style='" + s_navItem + "' href='#" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val().replace(" ", "_") + "'>" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val() + "</a>");
+
+
+
+    var sectionDesc = ("<div style='" + s_noImageDesc + "'>  " + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 1]).val());
+    var image = ("<img src='" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 2]).val() + "'>");
+
+    var tempobj = {};
+    tempobj.title = $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i]).val();
+    tempobj.desc = $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 1]).val();
+
+    var hasimage = true;
+    if ($($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 2]).val() == "") {
+      hasimage = false;
+    }
+
+    if (!hasimage) {
+      //text on its own no image
+      $("#preview").append(sectionDesc);
+    } else {
+      tempobj.img = $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 2]).val();
+      if (jacksvar % 2 == 0) {
+        //image left text right
+        $("#preview").append("<div style='" + p_parentLeft + " " + s_section + "'><div >" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 1]).val() + "</div><img style='" + p_imageSize + " ' src='" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 2]).val() + "'></div>");
+      } else {
+        //image right text left
+        $("#preview").append("<div style='" + p_parentRight + " " + s_section + "'><div >" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 1]).val() + "</div><img style='" + p_imageSize + "' src='" + $($(".sectioninputcontainer input, .sectioninputcontainer textarea")[i + 2]).val() + "'></div>");
+      }
+    }
+    data.sections.push(tempobj);
+    console.log(JSON.stringify(data));
+    jacksvar++;
+  }
+  $("#userinputdialog").hide();
+}
+
+
+
+
+//Makes the edit button toggle the userinputdialog as hidden or visible
+$(document).ready(function() {
+  $("#editbutton").click(function() {
+    $("#userinputdialog").toggle();
+  });
+});
+
+//Adds another section for the user to enter details or steps into
+function addSection() {
+  $(".sectioninputcontainer").append("<div style='margin:15px;border-bottom:3px white;border-top:3px white;padding:10px;background:rgba(0,0,0,0.3)'><input style='width:100%; " + inputmaterial + "' placeholder='section title' type='textarea'><br>   <textarea rows=10 style='width:100%;resize: none; " + inputmaterial + "' placeholder='section description'></textarea><br><input style='width:100%; " + inputmaterial + "' placeholder='image link (optional)' type='textarea'><br><input class='btn2' type='button' value='remove section'><br>   </div>");
+  //  $(".sectioncontainer").append("<div style="+s_general+" ></div>")
+  $(".btn2").click(function() {
+    $(this).parent().remove();
+  })
+  //editor initialised again here
+  $(function() { $('textarea').froalaEditor() });
+
+}
+
+//    changes the colour of the section header to random colour from list of colours but didn't work
+
+//   $(document).ready(function () {
+//   var back = ["#73e8ff","#ffa726","#5472d3","#4dd0e1","#d4e157"];
+//   var rand = back[Math.floor(Math.random() * back.length)];
+//   $('#preview.').css('background',rand);
+// })
+
+
+//removes all the sections
+function removeSection() {
+  $(".sectioninputcontainer").empty();
+}
+</script>
+
+</html>
